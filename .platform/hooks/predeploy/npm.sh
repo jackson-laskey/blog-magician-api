@@ -1,3 +1,7 @@
 #!/bin/bash
 cd /var/app/staging
-npm install 
+
+# Install production dependencies only
+npm ci --only=production
+
+exit 0 
