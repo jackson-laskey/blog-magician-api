@@ -17,6 +17,9 @@ jobs:
       - node/install:
           node-version: '18.18.0'
       - run:
+          name: Install TypeScript Globally
+          command: npm install -g typescript
+      - run:
           name: Install Dependencies
           command: npm install
       - run:
