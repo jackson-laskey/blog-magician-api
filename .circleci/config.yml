@@ -21,13 +21,14 @@ jobs:
           command: |
             echo "Node version: $(node -v)"
             echo "NPM version: $(npm -v)"
-            echo "TypeScript version: $(npx tsc -v)"
             echo "Working directory: $(pwd)"
             ls -la
       - run:
           name: Install Dependencies
           command: |
             npm ci
+            npm install -g typescript
+            echo "TypeScript version: $(tsc -v)"
             echo "Node modules after install:"
             ls -la node_modules/@types
       - run:
@@ -36,10 +37,11 @@ jobs:
             echo "TSConfig contents:"
             cat tsconfig.json
             echo "\nCompiling with --traceResolution:"
-            npx tsc --traceResolution
+            tsc --traceResolution
       - run:
           name: Build API
-          command: npm run build
+          command: |
+            tsc -p tsconfig.json
       - run:
           name: Deploy to Elastic Beanstalk
           command: |
