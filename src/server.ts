@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectToDatabase } from '@blog-platform/database';
+import { connectToDatabase } from './utils/database';
 import contentRoutes from './routes/content';
 import mongoose from 'mongoose';
 import { validateApiKey } from './middleware/auth';
@@ -54,7 +54,7 @@ connectToDatabase().then(async () => {
   app.listen(port, () => {
     console.log(`Content API server running on port ${port}`);
   });
-}).catch(err => {
+}).catch((err: Error) => {
   console.error('Failed to connect to MongoDB:', err);
   process.exit(1);
 }); 

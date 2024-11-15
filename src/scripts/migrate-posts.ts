@@ -1,4 +1,4 @@
-import { Post, Author, Tag } from '@blog-platform/types';
+import { Post, Author, Tag } from '@jdl-keys/blog-magician-types';
 import { ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
 import path from 'path';

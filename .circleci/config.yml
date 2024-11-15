@@ -1,0 +1,39 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@3.1
+  node: circleci/node@5.1.0
+
+jobs:
+  deploy:
+    docker:
+      - image: cimg/python:3.11-node
+    steps:
+      - checkout
+      - aws-cli/setup:
+          aws-access-key-id: APP_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: APP_AWS_SECRET_ACCESS_KEY
+          aws-region: APP_AWS_DEFAULT_REGION
+      - node/install:
+          node-version: '18.18.0'
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Build API
+          command: npm run build
+      - run:
+          name: Deploy to Elastic Beanstalk
+          command: |
+            pip install awsebcli
+            eb deploy blog-magician-api-prod
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only:
+                - main 
