@@ -35,6 +35,25 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Wait for environment to be ready
+        run: |
+          MAX_ATTEMPTS=30
+          ATTEMPT=1
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            STATUS=$(aws elasticbeanstalk describe-environments --environment-names Blog-magician-api-prod --query "Environments[0].Status" --output text)
+            if [ "$STATUS" = "Ready" ]; then
+              echo "Environment is ready"
+              break
+            fi
+            echo "Environment status is $STATUS, waiting... (Attempt $ATTEMPT of $MAX_ATTEMPTS)"
+            sleep 10
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+          if [ $ATTEMPT -gt $MAX_ATTEMPTS ]; then
+            echo "Environment did not become ready in time"
+            exit 1
+          fi
+
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
         with:
