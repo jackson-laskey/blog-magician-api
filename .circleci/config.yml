@@ -17,36 +17,22 @@ jobs:
       - node/install:
           node-version: '18.18.0'
       - run:
-          name: Debug Environment
+          name: Clear npm cache
           command: |
-            echo "Node version: $(node -v)"
-            echo "NPM version: $(npm -v)"
-            echo "Working directory: $(pwd)"
-            ls -la
+            npm cache clean --force
       - run:
           name: Install Dependencies
           command: |
-            # Install dependencies
-            npm ci
-            # Install TypeScript globally
+            rm -rf node_modules
+            npm install
             sudo npm install -g typescript
-            # Install type definitions explicitly
-            npm install --save-dev @types/node@20.0.0 @types/express@4.17.21 @types/cors@2.8.17
-            
             echo "TypeScript version: $(tsc -v)"
-            echo "Node modules after install:"
-            ls -la node_modules/@types
-      - run:
-          name: TypeScript Compile Debug
-          command: |
-            echo "TSConfig contents:"
-            cat tsconfig.json
-            echo "\nAttempting compilation..."
-            tsc -p tsconfig.json --listFiles
+            echo "Node modules structure:"
+            ls -R node_modules/@types
       - run:
           name: Build API
           command: |
-            tsc -p tsconfig.json
+            npm run build
       - run:
           name: Deploy to Elastic Beanstalk
           command: |
