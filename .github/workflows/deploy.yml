@@ -40,8 +40,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: blog-magician-api
-          environment_name: blog-magician-api-prod
+          application_name: blog-magician
+          environment_name: Blog-magician-api-prod
           region: ${{ secrets.AWS_REGION }}
           version_label: ${{ github.sha }}
           deployment_package: deploy.zip
