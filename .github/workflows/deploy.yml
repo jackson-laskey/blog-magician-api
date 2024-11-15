@@ -24,6 +24,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Generate deployment package
+        run: |
+          zip -r deploy.zip . -x "*.git*" "node_modules/*" "src/*"
+          
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -40,4 +44,4 @@ jobs:
           environment_name: blog-magician-api-prod
           region: ${{ secrets.AWS_REGION }}
           version_label: ${{ github.sha }}
-          deployment_package: . 
+          deployment_package: deploy.zip
