@@ -17,9 +17,9 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && tsc -p tsconfig.json",
-    "build:watch": "tsc -p tsconfig.json --watch",
-    "type-check": "tsc --noEmit",
+    "build": "npm run clean && npx tsc -p tsconfig.json",
+    "build:watch": "npx tsc -p tsconfig.json --watch",
+    "type-check": "npx tsc --noEmit",
     "start": "node dist/server.js"
   }
 }
