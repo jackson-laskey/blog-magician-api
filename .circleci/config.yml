@@ -17,11 +17,26 @@ jobs:
       - node/install:
           node-version: '18.18.0'
       - run:
-          name: Install TypeScript Globally
-          command: npm install -g typescript
+          name: Debug Environment
+          command: |
+            echo "Node version: $(node -v)"
+            echo "NPM version: $(npm -v)"
+            echo "TypeScript version: $(npx tsc -v)"
+            echo "Working directory: $(pwd)"
+            ls -la
       - run:
           name: Install Dependencies
-          command: npm install
+          command: |
+            npm ci
+            echo "Node modules after install:"
+            ls -la node_modules/@types
+      - run:
+          name: TypeScript Compile Debug
+          command: |
+            echo "TSConfig contents:"
+            cat tsconfig.json
+            echo "\nCompiling with --traceResolution:"
+            npx tsc --traceResolution
       - run:
           name: Build API
           command: npm run build
@@ -39,4 +54,4 @@ workflows:
           filters:
             branches:
               only:
-                - main 
+                - main
