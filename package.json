@@ -16,9 +16,10 @@
     "rimraf": "^5.0.1"
   },
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p tsconfig.json",
     "build:watch": "tsc -p tsconfig.json --watch",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "start": "node dist/server.js"
   }
 }
