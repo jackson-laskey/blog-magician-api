@@ -1,42 +1,57 @@
 version: 2.1
 
+aliases:
+  - &restore-cache
+    restore_cache:
+      key: npm-v1-{{ checksum "package.json" }}
+
+  - &save-cache
+    save_cache:
+      key: npm-v1-{{ checksum "package.json" }}
+      paths:
+        - ~/project/node_modules
+
 orbs:
   aws-cli: circleci/aws-cli@3.1
-  node: circleci/node@5.1.0
 
 jobs:
   deploy:
     docker:
-      - image: cimg/python:3.11-node
+      - image: cimg/node:18.18.0
+    working_directory: ~/project
     steps:
       - checkout
-      - aws-cli/setup:
-          aws-access-key-id: APP_AWS_ACCESS_KEY_ID
-          aws-secret-access-key: APP_AWS_SECRET_ACCESS_KEY
-          aws-region: APP_AWS_DEFAULT_REGION
-      - node/install:
-          node-version: '18.18.0'
-      - run:
-          name: Clear npm cache
-          command: |
-            npm cache clean --force
+      - *restore-cache
       - run:
           name: Install Dependencies
           command: |
-            rm -rf node_modules
-            npm install
-            sudo npm install -g typescript
-            echo "TypeScript version: $(tsc -v)"
-            echo "Node modules structure:"
-            ls -R node_modules/@types
+            echo "Node version: $(node -v)"
+            echo "NPM version: $(npm -v)"
+            npm ci
+            echo "TypeScript version: $(npx tsc -v)"
+      - *save-cache
       - run:
           name: Build API
           command: |
             npm run build
       - run:
+          name: Install Python and AWS EB CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install python3-pip
+            pip install --user awsebcli
+      - run:
+          name: Configure AWS Credentials
+          command: |
+            mkdir ~/.aws
+            echo "[default]" > ~/.aws/config
+            echo "region = ${APP_AWS_DEFAULT_REGION}" >> ~/.aws/config
+            echo "[default]" > ~/.aws/credentials
+            echo "aws_access_key_id = ${APP_AWS_ACCESS_KEY_ID}" >> ~/.aws/credentials
+            echo "aws_secret_access_key = ${APP_AWS_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
+      - run:
           name: Deploy to Elastic Beanstalk
           command: |
-            pip install awsebcli
             eb deploy blog-magician-api-prod
 
 workflows:
