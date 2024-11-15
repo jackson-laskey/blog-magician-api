@@ -45,3 +45,4 @@ jobs:
           region: ${{ secrets.AWS_REGION }}
           version_label: ${{ github.sha }}
           deployment_package: deploy.zip
+          environment_variables: MONGODB_URI=${{ secrets.MONGODB_URI }}
